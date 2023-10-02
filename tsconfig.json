@@ -1,0 +1,32 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "include": ["src", "test"],
+  "compilerOptions": {
+    /* Projects */
+    "target": "es2022",
+    "lib": [],
+    /* Modules */
+    "outDir": "dist/",
+    "rootDir": "src/",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
+    /* Emit */
+    "declaration": false,
+    "declarationMap": false,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    /* Completeness */
+    "skipLibCheck": true,
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@/*": ["*"],
+    // },
+  }
+}
