@@ -13,7 +13,6 @@ export default class GetStudentUsecase implements Usecase<GetStudentInputDto, Ge
     const result = await this.studentRepository.getStudent(
       input.studentPk,
     );
-    console.log("result", result);
     if (!result) throw new NotFoundException("Student not found");
     return new GetStudentOutputDto(
       result.pk,

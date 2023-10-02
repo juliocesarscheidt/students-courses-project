@@ -13,7 +13,6 @@ export default class GetCourseUsecase implements Usecase<GetCourseInputDto, GetC
     const result = await this.courseRepository.getCourse(
       input.coursePk,
     );
-    console.log("result", result);
     if (!result) throw new NotFoundException("Course not found");
     return new GetCourseOutputDto(
       result.pk,

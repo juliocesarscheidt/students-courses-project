@@ -19,12 +19,10 @@ export default class StudentRepositoryDynamodb implements StudentRepository {
     email: string,
   ): Promise<Student> {
     const student = Student.newStudent(name, surname, fullName, email);
-    console.log("student", student);
     try {
       await this.dynamodbClientAdapter.put("pk", student, this.studentsTableName);
       return student;
     } catch (e: any) {
-      // console.log("error", e);
       if (e instanceof ConditionalCheckFailedException) {
         throw new StudentAlreadyExistsException();
       }

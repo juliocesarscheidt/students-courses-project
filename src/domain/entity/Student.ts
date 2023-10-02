@@ -1,12 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-
-const normalizeString = (str: string): string => {
-  return str.trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/gi, '')
-    .toLowerCase();
-};
+import ValidationException from "../exception/ValidationException";
+import SkValueObject from "../vo/SkValueObject";
+import PkValueObject from "../vo/PkValueObject";
 
 export default class Student {
 
@@ -42,12 +37,13 @@ export default class Student {
     email: string,
   ): Student {
     // TODO: adjust exception
-    if (!name || !surname || !fullName || !email) throw new Error("Invalid params");
+    if (!name || !surname || !fullName || !email)
+      throw new ValidationException();
 
     const id = uuidv4();
     const creationDate = new Date();
 
-    const pk = normalizeString(fullName);
+    const pk = new PkValueObject(fullName);
 
     // date in format YYYY-MM-DD
     const creationDateStr = creationDate.getUTCFullYear() + "-" +
@@ -56,22 +52,19 @@ export default class Student {
 
     // student#2023-10-1#doe#john#
     // ENTITY#CREATIONDATE#SURNAME#NAME#
-    const sk = "student#" +
-      creationDateStr + "#" +
-      normalizeString(surname) + "#" +
-      normalizeString(name) + "#";
+    const sk = new SkValueObject(
+      "student",
+      creationDateStr,
+      [],
+      [surname, name],
+    );
 
     const dateUTC = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(),
       creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
-    console.log("id", id);
-    console.log("pk", pk);
-    console.log("sk", sk);
-    console.log("dateUTC", dateUTC);
-
     return new Student(
-      pk,
-      sk,
+      pk.getValue(),
+      sk.getValue(),
       id,
       name,
       surname,

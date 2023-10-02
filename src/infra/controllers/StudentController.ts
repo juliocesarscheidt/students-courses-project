@@ -6,6 +6,7 @@ import StudentAlreadyExistsException from "../../domain/exception/StudentAlready
 import GetStudentUsecase from "../../application/usecase/GetStudentUsecase";
 import GetStudentInputDto from "../../application/dto/student/GetStudentInputDto";
 import NotFoundException from "../../domain/exception/NotFoundException";
+import ValidationException from "../../domain/exception/ValidationException";
 
 export default class StudentController {
   constructor(
@@ -20,7 +21,6 @@ export default class StudentController {
       body.name + " " + body.surname, // fullName
       body.email,
     );
-    console.log("createStudentInputDto", createStudentInputDto);
 
     try {
       const result = await this.createStudentUsecase.Execute(createStudentInputDto);
@@ -28,8 +28,11 @@ export default class StudentController {
 
     } catch (e: any) {
       console.log("error", e);
-      if (e instanceof StudentAlreadyExistsException) {
+      if (e instanceof ValidationException) {
         return new HttpResponseBuilder(400).setError(e.message).build();
+      }
+      if (e instanceof StudentAlreadyExistsException) {
+        return new HttpResponseBuilder(409).setError(e.message).build();
       }
       return new HttpResponseBuilder(500).setError(e.message).build();
     }
@@ -39,7 +42,6 @@ export default class StudentController {
     const getStudentInputDto = new GetStudentInputDto(
       params.studentPk,
     );
-    console.log("getStudentInputDto", getStudentInputDto);
 
     try {
       const result = await this.getStudentUsecase.Execute(getStudentInputDto);

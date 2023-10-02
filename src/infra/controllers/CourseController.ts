@@ -10,6 +10,7 @@ import GetCourseInputDto from "../../application/dto/course/GetCourseInputDto";
 import GetCourseUsecase from "../../application/usecase/GetCourseUsecase";
 import ListCourseByAreaInputDto from "../../application/dto/course/ListCourseByAreaInputDto";
 import ListCourseByAreaUsecase from "../../application/usecase/ListCourseByAreaUsecase";
+import ValidationException from "../../domain/exception/ValidationException";
 
 export default class CourseController {
   constructor(
@@ -28,7 +29,6 @@ export default class CourseController {
       body.author,
       body.quantityClasses
     );
-    console.log("createCourseInputDto", createCourseInputDto);
 
     try {
       const result = await this.createCourseUsecase.Execute(createCourseInputDto);
@@ -36,8 +36,11 @@ export default class CourseController {
 
     } catch (e: any) {
       console.log("error", e);
-      if (e instanceof CourseAlreadyExistsException) {
+      if (e instanceof ValidationException) {
         return new HttpResponseBuilder(400).setError(e.message).build();
+      }
+      if (e instanceof CourseAlreadyExistsException) {
+        return new HttpResponseBuilder(409).setError(e.message).build();
       }
       return new HttpResponseBuilder(500).setError(e.message).build();
     }
@@ -47,7 +50,6 @@ export default class CourseController {
     const getCourseInputDto = new GetCourseInputDto(
       params.coursePk,
     );
-    console.log("getCourseInputDto", getCourseInputDto);
 
     try {
       const result = await this.getCourseUsecase.Execute(getCourseInputDto);
@@ -66,7 +68,6 @@ export default class CourseController {
     const listCourseByAreaInputDto = new ListCourseByAreaInputDto(
       params.area,
     );
-    console.log("listCourseByAreaInputDto", listCourseByAreaInputDto);
 
     try {
       const result = await this.listCourseByAreaUsecase.Execute(listCourseByAreaInputDto);
@@ -83,7 +84,6 @@ export default class CourseController {
       params.coursePk,
       params.studentPk,
     );
-    console.log("subscribeStudentToCourseInputDto", subscribeStudentToCourseInputDto);
 
     try {
       const result = await this.subscribeStudentToCourseUsecase.Execute(subscribeStudentToCourseInputDto);
@@ -91,6 +91,9 @@ export default class CourseController {
 
     } catch (e: any) {
       console.log("error", e);
+      if (e instanceof ValidationException) {
+        return new HttpResponseBuilder(400).setError(e.message).build();
+      }
       if (e instanceof NotFoundException) {
         return new HttpResponseBuilder(404).setError(e.message).build();
       }

@@ -13,7 +13,6 @@ export default class SubscribeStudentToCourseUsecase implements Usecase<Subscrib
       input.coursePk,
       input.studentPk,
     );
-    console.log("result", result);
     return new SubscribeStudentToCourseOutputDto(
       result.pk,
       result.sk,

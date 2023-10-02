@@ -20,7 +20,6 @@ export default class HttpAdapter implements Http {
 
   on(url: string, method: string, fn: any): void {
     this.app[method](url, async (req: any, res: any) => {
-      // console.log(req.body)
       const response: HttpResponse = await fn(req.params, req.body, req.query, req.headers);
       return res
         .status(response.statusCode)

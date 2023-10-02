@@ -1,12 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-
-const normalizeString = (str: string): string => {
-  return str.trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/gi, '')
-    .toLowerCase();
-};
+import ValidationException from "../exception/ValidationException";
+import SkValueObject from "../vo/SkValueObject";
+import PkValueObject from "../vo/PkValueObject";
 
 export default class Course {
 
@@ -54,13 +49,14 @@ export default class Course {
     quantityClasses: number
   ): Course {
     // TODO: adjust exception
-    if (!name || !price || !area || !subArea || !author || !quantityClasses) throw new Error("Invalid params");
+    if (!name || !price || !area || !subArea || !author || !quantityClasses)
+      throw new ValidationException();
 
     const id = uuidv4();
     const students = new Set<string>();
     const creationDate = new Date();
 
-    const pk = normalizeString(name);
+    const pk = new PkValueObject(name);
 
     // date in format YYYY-MM-DD
     const creationDateStr = creationDate.getUTCFullYear() + "-" +
@@ -69,24 +65,19 @@ export default class Course {
 
     // course#2023-10-1#100.00#technology#cloudcomputing#julioscheidt#
     // ENTITY#CREATIONDATE#PRICE#AREA#SUBAREA#AUTHOR#
-    const sk = "course#" +
-      creationDateStr + "#" +
-      price + "#" +
-      normalizeString(area) + "#" +
-      normalizeString(subArea) + "#" +
-      normalizeString(author) + "#";
+      const sk = new SkValueObject(
+        "course",
+        creationDateStr,
+        [price],
+        [area, subArea, author],
+      );
 
     const dateUTC = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(),
       creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
-    console.log("id", id);
-    console.log("pk", pk);
-    console.log("sk", sk);
-    console.log("dateUTC", dateUTC);
-
     return new Course(
-      pk,
-      sk,
+      pk.getValue(),
+      sk.getValue(),
       id,
       name,
       price,

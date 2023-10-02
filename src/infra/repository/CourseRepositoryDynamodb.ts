@@ -21,12 +21,10 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
     quantityClasses: number
   ): Promise<Course> {
     const course = Course.newCourse(name, price, area, subArea, author, quantityClasses);
-    console.log("course", course);
     try {
       await this.dynamodbClientAdapter.put("pk", course, this.coursesTableName);
       return course;
     } catch (e: any) {
-      // console.log("error", e);
       if (e instanceof ConditionalCheckFailedException) {
         throw new CourseAlreadyExistsException();
       }

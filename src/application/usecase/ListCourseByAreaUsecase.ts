@@ -13,7 +13,6 @@ export default class ListCourseByAreaUsecase implements Usecase<ListCourseByArea
     const result = await this.courseRepository.listCourseByArea(
       input.area,
     );
-    console.log("result", result);
     if (!result) return null;
     return result.map((course: Course) => new ListCourseByAreaOutputDto(
       course.pk,
