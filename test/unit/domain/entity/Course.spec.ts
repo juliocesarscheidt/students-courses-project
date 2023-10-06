@@ -3,7 +3,7 @@ import ValidationException from "../../../../src/domain/exception/ValidationExce
 import ValueObject from "../../../../src/domain/vo/ValueObject";
 
 describe("Course entity tests", () => {
-  test("Shouldn create a new course", () => {
+  test("It should create a new course", () => {
     // given
     const expectedCourseName = "Course 1";
     const expectedPrice = 100.00;
@@ -31,7 +31,7 @@ describe("Course entity tests", () => {
     expect(course.creationDate).toBeDefined();
   });
 
-  test("Shouldn't create course without any required attribute", () => {
+  test("It shouldn't create course without any required attribute", () => {
     // given
     const expectedCourseName = "Course 1";
     const expectedPrice = 100.00;
@@ -46,7 +46,7 @@ describe("Course entity tests", () => {
     }).toThrow(ValidationException);
   });
 
-  test("Shouldn subscribe a student to a course", () => {
+  test("It should subscribe a student to a course", () => {
     // given
     const expectedCourseName = "Course 1";
     const expectedPrice = 100.00;

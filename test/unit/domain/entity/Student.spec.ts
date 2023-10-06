@@ -3,7 +3,7 @@ import ValidationException from "../../../../src/domain/exception/ValidationExce
 import ValueObject from "../../../../src/domain/vo/ValueObject";
 
 describe("Student entity tests", () => {
-  test("Shouldn create a new student", () => {
+  test("It should create a new student", () => {
     // given
     const expectedName = "John";
     const expectedSurname = "Doe";
@@ -23,7 +23,7 @@ describe("Student entity tests", () => {
     expect(student.creationDate).toBeDefined();
   });
 
-  test("Shouldn't create student without any required attribute", () => {
+  test("It shouldn't create student without any required attribute", () => {
     // given
     const expectedName = "John";
     const expectedSurname = "Doe";
