@@ -8,7 +8,7 @@
     "nodemon": "nodemon",
     "ts-node": "ts-node",
     "build": "rimraf dist && tsc",
-    "start": "node dist/src/main.js",
+    "start": "node dist/main.js",
     "dev": "nodemon --watch 'src/**' --exec 'ts-node src/**.ts' --ext 'ts,json' --ignore 'test/**/*.spec.ts'",
     "dev:watch": "tsc -w --preserveWatchOutput",
     "lint": "eslint --ext .ts src",
