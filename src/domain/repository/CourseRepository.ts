@@ -2,18 +2,13 @@ import Course from "../entity/Course";
 
 export default interface CourseRepository {
 
-  createCourse(
-    name: string,
-    price: number,
-    area: string,
-    subArea: string,
-    author: string,
-    quantityClasses: number
-  ): Promise<Course>;
+  createCourse(course: Course): Promise<void>;
 
   getCourse(coursePk: string): Promise<Course | null>;
 
   listCourseByArea(area: string): Promise<Course[] | null>;
+
+  listCourseByStudent(studentPk: string): Promise<Course[] | null>;
 
   subscribeStudentToCourse(
     coursePk: string,

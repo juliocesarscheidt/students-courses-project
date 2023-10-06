@@ -1,4 +1,4 @@
-export default class ListCourseByAreaOutputDto {
+export default class ListCourseByStudentOutputDto {
 
   constructor(
     public readonly pk: string,

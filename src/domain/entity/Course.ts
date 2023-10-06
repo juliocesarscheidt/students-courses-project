@@ -41,14 +41,13 @@ export default class Course {
   }
 
   public static newCourse(
-    name: string,
-    price: number,
-    area: string,
-    subArea: string,
-    author: string,
-    quantityClasses: number
+    name?: string,
+    price?: number,
+    area?: string,
+    subArea?: string,
+    author?: string,
+    quantityClasses?: number,
   ): Course {
-    // TODO: adjust exception
     if (!name || !price || !area || !subArea || !author || !quantityClasses)
       throw new ValidationException();
 
@@ -72,8 +71,10 @@ export default class Course {
         [area, subArea, author],
       );
 
-    const dateUTC = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(),
-      creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+    const dateUTC = new Date(creationDate.getUTCFullYear(),
+      creationDate.getUTCMonth(), creationDate.getUTCDate(),
+      creationDate.getUTCHours(), creationDate.getUTCMinutes(),
+      creationDate.getUTCSeconds());
 
     return new Course(
       pk.getValue(),

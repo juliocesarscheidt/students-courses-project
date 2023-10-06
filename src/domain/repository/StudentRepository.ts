@@ -2,12 +2,7 @@ import Student from "../entity/Student";
 
 export default interface StudentRepository {
 
-  createStudent(
-    name: string,
-    surname: string,
-    fullName: string,
-    email: string,
-  ): Promise<Student>;
+  createStudent(student: Student): Promise<void>;
 
   getStudent(studentPk: string): Promise<Student | null>;
 }

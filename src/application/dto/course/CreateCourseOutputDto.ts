@@ -12,6 +12,5 @@ export default class CreateCourseOutputDto {
     public readonly quantityClasses: number,
     public readonly students: string[],
     public readonly creationDate: string,
-  ) {
-  }
+  ) {}
 }

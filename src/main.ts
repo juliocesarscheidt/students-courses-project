@@ -11,7 +11,8 @@ const http = new HttpAdapter();
 
 const dynamodbClient = DynamoDBDocumentClient.from(
   new DynamoDBClient({ region: process.env.AWS_REGION }),
-  { marshallOptions: { convertEmptyValues: true, removeUndefinedValues: true, convertClassInstanceToMap: true } });
+  { marshallOptions: { convertEmptyValues: true,
+    removeUndefinedValues: true, convertClassInstanceToMap: true } });
 
 const dynamodbClientAdapter = new DynamoDBClientAdapter(dynamodbClient);
 const factory = new RepositoryFactoryDynamodb(dynamodbClientAdapter);

@@ -4,24 +4,16 @@ import StudentRepository from "../../domain/repository/StudentRepository";
 import DynamoDBClientAdapter from "../adapter/DynamoDBClientAdapter";
 import StudentAlreadyExistsException from "../../domain/exception/StudentAlreadyExistsException";
 import NotFoundException from "../../domain/exception/NotFoundException";
+import { TablesNameMapping } from "./TablesNameMapping";
 
 export default class StudentRepositoryDynamodb implements StudentRepository {
-  coursesTableName: string = "Courses";
-  studentsTableName: string = "Students";
 
-  constructor(readonly dynamodbClientAdapter: DynamoDBClientAdapter) {
-  }
+  constructor(readonly dynamodbClientAdapter: DynamoDBClientAdapter) {}
 
-  async createStudent(
-    name: string,
-    surname: string,
-    fullName: string,
-    email: string,
-  ): Promise<Student> {
-    const student = Student.newStudent(name, surname, fullName, email);
+  async createStudent(student: Student): Promise<void> {
     try {
-      await this.dynamodbClientAdapter.put("pk", student, this.studentsTableName);
-      return student;
+      await this.dynamodbClientAdapter
+        .put("pk", student, TablesNameMapping.STUDENTS_TABLE_NAME);
     } catch (e: any) {
       if (e instanceof ConditionalCheckFailedException) {
         throw new StudentAlreadyExistsException();
@@ -31,7 +23,8 @@ export default class StudentRepositoryDynamodb implements StudentRepository {
   }
 
   async getStudent(studentPk: string): Promise<Student | null> {
-    const students = await this.dynamodbClientAdapter.query({ "pk": studentPk }, this.studentsTableName);
+    const students = await this.dynamodbClientAdapter
+      .query({ "pk": studentPk }, TablesNameMapping.STUDENTS_TABLE_NAME);
     if (!students || students.length === 0) {
       throw new NotFoundException("Student not found");
     }

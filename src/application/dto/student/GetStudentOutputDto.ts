@@ -6,9 +6,7 @@ export default class GetStudentOutputDto {
     public readonly id: string,
     public readonly name: string,
     public readonly surname: string,
-    public readonly fullName: string,
     public readonly email: string,
     public readonly creationDate: string,
-  ) {
-  }
+  ) {}
 }

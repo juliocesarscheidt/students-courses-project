@@ -9,12 +9,13 @@
     "ts-node": "ts-node",
     "build": "rimraf dist && tsc",
     "start": "node dist/src/main.js",
-    "dev": "nodemon --watch 'src/**' --exec 'ts-node src/**.ts' --ext 'ts,json' --ignore 'test/**/*.test.ts'",
+    "dev": "nodemon --watch 'src/**' --exec 'ts-node src/**.ts' --ext 'ts,json' --ignore 'test/**/*.spec.ts'",
     "dev:watch": "tsc -w --preserveWatchOutput",
     "lint": "eslint --ext .ts src",
-    "test": "rimraf dist && tsc && jest --forceExit ./dist",
-    "test:coverage": "rimraf dist && tsc && jest --forceExit --coverage ./dist",
-    "test:watch": "rimraf dist && tsc -w --preserveWatchOutput | jest --watch ./dist"
+    "test": "jest --forceExit./test",
+    "test:verbose": "jest --forceExit --verbose ./test",
+    "test:coverage": "jest --forceExit --coverage ./test",
+    "test:watch": "jest --watch ./test"
   },
   "keywords": [],
   "author": "Julio Cesar <julio@blackdevs.com.br>",

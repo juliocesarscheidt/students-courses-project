@@ -4,26 +4,16 @@ import CourseRepository from "../../domain/repository/CourseRepository";
 import DynamoDBClientAdapter from "../adapter/DynamoDBClientAdapter";
 import CourseAlreadyExistsException from "../../domain/exception/CourseAlreadyExistsException";
 import NotFoundException from "../../domain/exception/NotFoundException";
+import { TablesNameMapping } from "./TablesNameMapping";
 
 export default class CourseRepositoryDynamodb implements CourseRepository {
-  coursesTableName: string = "Courses";
-  studentsTableName: string = "Students";
 
-  constructor(readonly dynamodbClientAdapter: DynamoDBClientAdapter) {
-  }
+  constructor(readonly dynamodbClientAdapter: DynamoDBClientAdapter) {}
 
-  async createCourse(
-    name: string,
-    price: number,
-    area: string,
-    subArea: string,
-    author: string,
-    quantityClasses: number
-  ): Promise<Course> {
-    const course = Course.newCourse(name, price, area, subArea, author, quantityClasses);
+  async createCourse(course: Course): Promise<void> {
     try {
-      await this.dynamodbClientAdapter.put("pk", course, this.coursesTableName);
-      return course;
+      await this.dynamodbClientAdapter
+        .put("pk", course, TablesNameMapping.COURSE_TABLE_NAME);
     } catch (e: any) {
       if (e instanceof ConditionalCheckFailedException) {
         throw new CourseAlreadyExistsException();
@@ -33,7 +23,8 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
   }
 
   async getCourse(coursePk: string): Promise<Course | null> {
-    const courses = await this.dynamodbClientAdapter.query({ "pk": coursePk }, this.coursesTableName);
+    const courses = await this.dynamodbClientAdapter
+      .query({ "pk": coursePk }, TablesNameMapping.COURSE_TABLE_NAME);
     if (!courses || courses.length === 0) {
       throw new NotFoundException("Course not found");
     }
@@ -41,7 +32,17 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
   }
 
   async listCourseByArea(area: string): Promise<Course[] | null> {
-    const courses = await this.dynamodbClientAdapter.query({ "area": area }, this.coursesTableName, "area-index");
+    const courses = await this.dynamodbClientAdapter
+      .query({ "area": area }, TablesNameMapping.COURSE_TABLE_NAME, "area-index");
+    if (!courses || courses.length === 0) {
+      return null;
+    }
+    return courses?.map((course: any) => Course.mapFrom(course));
+  }
+
+  async listCourseByStudent(studentPk: string): Promise<Course[] | null> {
+    const courses = await this.dynamodbClientAdapter
+      .scanWithContainsFilter({ "students": studentPk }, TablesNameMapping.COURSE_TABLE_NAME);
     if (!courses || courses.length === 0) {
       return null;
     }
@@ -52,12 +53,14 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
     coursePk: string,
     studentPk: string
   ): Promise<Course> {
-    const courses = await this.dynamodbClientAdapter.query({ "pk": coursePk }, this.coursesTableName);
+    const courses = await this.dynamodbClientAdapter
+      .query({ "pk": coursePk }, TablesNameMapping.COURSE_TABLE_NAME);
     if (!courses || courses.length === 0) {
       throw new NotFoundException("Course not found");
     }
 
-    const students = await this.dynamodbClientAdapter.query({ "pk": studentPk }, this.studentsTableName);
+    const students = await this.dynamodbClientAdapter
+      .query({ "pk": studentPk }, TablesNameMapping.STUDENTS_TABLE_NAME);
     if (!students || students.length === 0) {
       throw new NotFoundException("Student not found");
     }
@@ -65,8 +68,9 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
     const course = Course.mapFrom(courses[0]);
     course.subscribeStudent(studentPk);
 
-    await this.dynamodbClientAdapter.update({ "pk": course.pk, "sk": course.sk },
-      { students: course.students }, this.coursesTableName);
+    await this.dynamodbClientAdapter
+      .update({ "pk": course.pk, "sk": course.sk },
+      { students: course.students }, TablesNameMapping.COURSE_TABLE_NAME);
     return course;
   }
 }

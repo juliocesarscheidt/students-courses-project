@@ -11,11 +11,9 @@ export default class Student {
     public readonly id: string,
     public readonly name: string,
     public readonly surname: string,
-    public readonly fullName: string,
     public readonly email: string,
     public readonly creationDate: string,
-  ) {
-  }
+  ) {}
 
   public static mapFrom(item: any): Student {
     return new Student(
@@ -24,26 +22,23 @@ export default class Student {
       item.id,
       item.name,
       item.surname,
-      item.fullName,
       item.email,
       item.creationDate,
     );
   }
 
   public static newStudent(
-    name: string,
-    surname: string,
-    fullName: string,
-    email: string,
+    name?: string,
+    surname?: string,
+    email?: string,
   ): Student {
-    // TODO: adjust exception
-    if (!name || !surname || !fullName || !email)
+    if (!name || !surname || !email)
       throw new ValidationException();
 
     const id = uuidv4();
     const creationDate = new Date();
 
-    const pk = new PkValueObject(fullName);
+    const pk = new PkValueObject(`${name} ${surname}`);
 
     // date in format YYYY-MM-DD
     const creationDateStr = creationDate.getUTCFullYear() + "-" +
@@ -59,8 +54,10 @@ export default class Student {
       [surname, name],
     );
 
-    const dateUTC = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(),
-      creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
+    const dateUTC = new Date(creationDate.getUTCFullYear(),
+      creationDate.getUTCMonth(), creationDate.getUTCDate(),
+      creationDate.getUTCHours(), creationDate.getUTCMinutes(),
+      creationDate.getUTCSeconds());
 
     return new Student(
       pk.getValue(),
@@ -68,7 +65,6 @@ export default class Student {
       id,
       name,
       surname,
-      fullName,
       email,
       dateUTC.toISOString(),
     );

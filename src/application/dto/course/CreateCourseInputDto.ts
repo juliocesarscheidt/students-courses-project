@@ -7,6 +7,5 @@ export default class CreateCourseInputDto {
     public readonly subArea: string,
     public readonly author: string,
     public readonly quantityClasses: number
-  ) {
-  }
+  ) {}
 }
