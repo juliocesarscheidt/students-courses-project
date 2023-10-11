@@ -1,4 +1,3 @@
-
 import HttpAdapter from "./infra/http/HttpAdapter";
 import Router from "./infra/http/Router";
 
