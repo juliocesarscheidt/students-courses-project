@@ -2,9 +2,9 @@ import Course from "../entity/Course";
 
 export default interface CourseRepository {
 
-  createCourse(course: Course): Promise<void>;
+  persistCourse(course: Course): Promise<void>;
 
-  getCourse(coursePk: string): Promise<Course | null>;
+  fetchCourse(coursePk: string): Promise<Course>;
 
   listCourseByArea(area: string): Promise<Course[] | null>;
 

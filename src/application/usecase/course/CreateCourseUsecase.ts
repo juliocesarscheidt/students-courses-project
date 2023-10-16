@@ -11,7 +11,7 @@ export default class CreateCourseUsecase implements Usecase<CreateCourseInputDto
   async Execute(input: CreateCourseInputDto): Promise<CreateCourseOutputDto> {
     const course = Course.newCourse(input.name, input.price, input.area,
       input.subArea, input.author, input.quantityClasses);
-    await this.courseRepository.createCourse(course);
+    await this.courseRepository.persistCourse(course);
     return new CreateCourseOutputDto(
       course.pk,
       course.sk,

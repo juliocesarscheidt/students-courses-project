@@ -1,4 +1,3 @@
-import NotFoundException from "../../../domain/exception/NotFoundException";
 import StudentRepository from "../../../domain/repository/StudentRepository";
 import GetStudentInputDto from "../../dto/student/GetStudentInputDto";
 import GetStudentOutputDto from "../../dto/student/GetStudentOutputDto";
@@ -9,8 +8,7 @@ export default class GetStudentUsecase implements Usecase<GetStudentInputDto, Ge
   constructor(public readonly studentRepository: StudentRepository) {}
 
   async Execute(input: GetStudentInputDto): Promise<GetStudentOutputDto> {
-    const student = await this.studentRepository.getStudent(input.studentPk);
-    if (!student) throw new NotFoundException("Student not found");
+    const student = await this.studentRepository.fetchStudent(input.studentPk);
     return new GetStudentOutputDto(
       student.pk,
       student.sk,

@@ -4,7 +4,7 @@ import HttpResponse from "../http/HttpResponse";
 import HttpResponseBuilder from "../http/HttpResponseBuilder";
 import CourseAlreadyExistsException from "../../domain/exception/CourseAlreadyExistsException";
 import SubscribeStudentToCourseInputDto from "../../application/dto/course/SubscribeStudentToCourseInputDto";
-import SubscribeStudentToCourseUsecase from "../../application/usecase/course/SubscribeStudentToCourse";
+import SubscribeStudentToCourseUsecase from "../../application/usecase/course/SubscribeStudentToCourseUsecase";
 import NotFoundException from "../../domain/exception/NotFoundException";
 import GetCourseInputDto from "../../application/dto/course/GetCourseInputDto";
 import GetCourseUsecase from "../../application/usecase/course/GetCourseUsecase";

@@ -4,7 +4,7 @@ import CourseController from "../controllers/CourseController";
 import AbstractRepositoryFactory from "../../domain/factory/AbstractRepositoryFactory";
 import CreateStudentUsecase from "../../application/usecase/student/CreateStudentUsecase";
 import StudentController from "../controllers/StudentController";
-import SubscribeStudentToCourseUsecase from "../../application/usecase/course/SubscribeStudentToCourse";
+import SubscribeStudentToCourseUsecase from "../../application/usecase/course/SubscribeStudentToCourseUsecase";
 import GetCourseUsecase from "../../application/usecase/course/GetCourseUsecase";
 import GetStudentUsecase from "../../application/usecase/student/GetStudentUsecase";
 import ListCourseByAreaUsecase from "../../application/usecase/course/ListCourseByAreaUsecase";
@@ -26,7 +26,7 @@ export default class Router {
     const getCourseUsecase = new GetCourseUsecase(courseRepository);
     const listCourseByAreaUsecase = new ListCourseByAreaUsecase(courseRepository);
     const listCourseByStudentUsecase = new ListCourseByStudentUsecase(courseRepository);
-    const subscribeStudentToCourseUsecase = new SubscribeStudentToCourseUsecase(courseRepository);
+    const subscribeStudentToCourseUsecase = new SubscribeStudentToCourseUsecase(courseRepository, studentRepository);
 
     const createStudentUsecase = new CreateStudentUsecase(studentRepository);
     const getStudentUsecase = new GetStudentUsecase(studentRepository);

@@ -1,16 +1,16 @@
 import { ConditionalCheckFailedException } from "@aws-sdk/client-dynamodb";
-import Course from "../../domain/entity/Course";
-import CourseRepository from "../../domain/repository/CourseRepository";
-import DynamoDBClientAdapter from "../adapter/DynamoDBClientAdapter";
-import CourseAlreadyExistsException from "../../domain/exception/CourseAlreadyExistsException";
-import NotFoundException from "../../domain/exception/NotFoundException";
-import { TablesNameMapping } from "./TablesNameMapping";
+import Course from "../../../domain/entity/Course";
+import CourseRepository from "../../../domain/repository/CourseRepository";
+import DynamoDBClientAdapter from "../../adapter/DynamoDBClientAdapter";
+import CourseAlreadyExistsException from "../../../domain/exception/CourseAlreadyExistsException";
+import NotFoundException from "../../../domain/exception/NotFoundException";
+import { TablesNameMapping } from "../TablesNameMapping";
 
 export default class CourseRepositoryDynamodb implements CourseRepository {
 
   constructor(readonly dynamodbClientAdapter: DynamoDBClientAdapter) {}
 
-  async createCourse(course: Course): Promise<void> {
+  async persistCourse(course: Course): Promise<void> {
     try {
       await this.dynamodbClientAdapter
         .put("pk", course, TablesNameMapping.COURSE_TABLE_NAME);
@@ -22,7 +22,7 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
     }
   }
 
-  async getCourse(coursePk: string): Promise<Course | null> {
+  async fetchCourse(coursePk: string): Promise<Course> {
     const courses = await this.dynamodbClientAdapter
       .query({ "pk": coursePk }, TablesNameMapping.COURSE_TABLE_NAME);
     if (!courses || courses.length === 0) {
@@ -57,12 +57,6 @@ export default class CourseRepositoryDynamodb implements CourseRepository {
       .query({ "pk": coursePk }, TablesNameMapping.COURSE_TABLE_NAME);
     if (!courses || courses.length === 0) {
       throw new NotFoundException("Course not found");
-    }
-
-    const students = await this.dynamodbClientAdapter
-      .query({ "pk": studentPk }, TablesNameMapping.STUDENTS_TABLE_NAME);
-    if (!students || students.length === 0) {
-      throw new NotFoundException("Student not found");
     }
 
     const course = Course.mapFrom(courses[0]);

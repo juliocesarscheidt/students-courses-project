@@ -1,4 +1,3 @@
-import NotFoundException from "../../../domain/exception/NotFoundException";
 import CourseRepository from "../../../domain/repository/CourseRepository";
 import GetCourseInputDto from "../../dto/course/GetCourseInputDto";
 import GetCourseOutputDto from "../../dto/course/GetCourseOutputDto";
@@ -10,8 +9,7 @@ export default class GetCourseUsecase implements Usecase<GetCourseInputDto, GetC
 
   async Execute(input: GetCourseInputDto): Promise<GetCourseOutputDto> {
     const course = await this.courseRepository
-      .getCourse(input.coursePk);
-    if (!course) throw new NotFoundException("Course not found");
+      .fetchCourse(input.coursePk);
     return new GetCourseOutputDto(
       course.pk,
       course.sk,

@@ -10,7 +10,7 @@ export default class CreateStudentUsecase implements Usecase<CreateStudentInputD
 
   async Execute(input: CreateStudentInputDto): Promise<CreateStudentOutputDto> {
     const student = Student.newStudent(input.name, input.surname, input.email);
-    await this.studentRepository.createStudent(student);
+    await this.studentRepository.persistStudent(student);
     return new CreateStudentOutputDto(
       student.pk,
       student.sk,
