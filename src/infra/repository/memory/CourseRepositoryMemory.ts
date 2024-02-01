@@ -16,11 +16,14 @@ export default class CourseRepositoryMemory implements CourseRepository {
     }
     this.coursesByPk.set(course.pk, course);
 
-    if (this.coursesListByArea.get(course.area)) {
-      this.coursesListByArea.get(course.area)?.add(course);
+    let coursesByArea = this.coursesListByArea.get(course.area);
+    if (coursesByArea) {
+      coursesByArea.add(course);
     } else {
-      this.coursesListByArea.set(course.area, new Set([course]));
+      coursesByArea = new Set([course]);
     }
+
+    this.coursesListByArea.set(course.area, coursesByArea);
   }
 
   async fetchCourse(coursePk: string): Promise<Course> {
@@ -65,23 +68,22 @@ export default class CourseRepositoryMemory implements CourseRepository {
 
     const course = Course.mapFrom(courses);
 
-    if (this.coursesListByArea.get(course.area)) {
-      this.coursesListByArea.get(course.area)?.delete(course);
+    let coursesByArea = this.coursesListByArea.get(course.area);
+    if (coursesByArea) {
+      const coursesByAreaInstance = Array
+        .from(coursesByArea)
+        .find((c) => c.pk === course.pk);
+      if (coursesByAreaInstance) coursesByArea.delete(coursesByAreaInstance);
+    } else {
+      coursesByArea = new Set([]);
     }
 
     course.subscribeStudent(studentPk);
 
     this.coursesByPk.set(course.pk, course);
 
-    if (this.coursesListByArea.get(course.area)) {
-      this.coursesListByArea.get(course.area)?.delete(course);
-    }
-
-    if (this.coursesListByArea.get(course.area)) {
-      this.coursesListByArea.get(course.area)?.add(course);
-    } else {
-      this.coursesListByArea.set(course.area, new Set([course]));
-    }
+    coursesByArea.add(course);
+    this.coursesListByArea.set(course.area, coursesByArea);
 
     return course;
   }
