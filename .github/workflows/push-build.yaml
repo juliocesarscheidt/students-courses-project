@@ -26,8 +26,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
+      id-token: write
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -85,30 +85,25 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
     defaults:
       run:
         shell: bash
     steps:
-    - name: The job has failed
-      if: ${{ failure() }}
+    - id: set-short-sha
+      name: Set short SHA and ECR registry URL as environment variables
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+    - id: notify
+      name: Notify
+      if: always()
       env:
         SHORT_SHA: ${{ env.SHORT_SHA }}
-      uses: mshick/add-pr-comment@v1
+      uses: mshick/add-pr-comment@v2
       with:
         message: |
-          The build of commit $SHORT_SHA has failed"
+          :rocket: The build of commit /$SHORT_SHA was successful, LGTM!
+        message-failure: |
+          The build of commit /$SHORT_SHA has failed!
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        repo-token-user-login: "github-actions[bot]"
-        allow-repeats: false
-    - name: The job has succeeded
-      if: ${{ success() }}
-      uses: mshick/add-pr-comment@v1
-      env:
-        SHORT_SHA: ${{ env.SHORT_SHA }}
-      with:
-        message: |
-          :rocket: The build of commit $SHORT_SHA was successful, LGTM!"
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        repo-token-user-login: "github-actions[bot]"
-        allow-repeats: false
