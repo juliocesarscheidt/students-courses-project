@@ -4,7 +4,7 @@ LABEL maintainer="Julio Cesar <julio@blackdevs.com.br>"
 WORKDIR /app
 
 COPY ./package.json ./yarn.lock ./
-RUN yarn install && yarn cache clean
+RUN yarn install
 
 COPY . .
 RUN yarn build

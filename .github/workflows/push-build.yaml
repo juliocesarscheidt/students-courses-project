@@ -5,16 +5,6 @@ on:
     branches:
       - 'main'
       - 'develop'
-    # paths:
-    #   - 'src/**'
-    #   - 'test/**'
-    #   - 'package.json'
-    #   - 'Dockerfile'
-    #   - 'README.md'
-    #   - '.github/workflows/push-build.yaml'
-  # pull_request:
-  #   branches: [main, develop]
-  #   types: [opened, reopened, synchronize, edited]
 
 env:
   SERVICE_NAME: students-courses-api
@@ -71,7 +61,7 @@ jobs:
           sh -c "yarn install && yarn lint && yarn test:verbose"
     - id: publish-image
       name: Publish
-      # if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       env:
         REGISTRY_URL: ${{ env.REGISTRY_URL }}
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
