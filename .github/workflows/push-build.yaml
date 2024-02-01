@@ -92,7 +92,7 @@ jobs:
         shell: bash
     steps:
     - id: set-short-sha
-      name: Set short SHA and ECR registry URL as environment variables
+      name: Set short SHA as environment variable
       run: |
         echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
     - id: notify
@@ -103,7 +103,7 @@ jobs:
       uses: mshick/add-pr-comment@v2
       with:
         message: |
-          :rocket: The build of commit ${{ env.SHORT_SHA }} was successful, LGTM!
+          :rocket: The build of commit ${SHORT_SHA} was successful, LGTM!
         message-failure: |
-          The build of commit ${{ env.SHORT_SHA }} has failed!
+          The build of commit ${SHORT_SHA} has failed!
         repo-token: ${{ secrets.GITHUB_TOKEN }}
