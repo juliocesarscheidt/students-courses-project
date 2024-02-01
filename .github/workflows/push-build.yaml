@@ -76,11 +76,13 @@ jobs:
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
         SERVICE_TAG: ${{ env.SHORT_SHA }}
       run: |
-        docker container run --rm --name tmp-lint --entrypoint "" $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG sh -c "yarn install && yarn lint && yarn test"
+        docker container run --rm --name tmp-lint \
+          --entrypoint "" $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG \
+          sh -c "yarn install && yarn lint && yarn test:verbose"
 
     - id: publish-image
       name: Publish
-      if: github.ref == 'refs/heads/main'
+      # if: github.ref == 'refs/heads/main'
       env:
         REGISTRY_URL: ${{ env.REGISTRY_URL }}
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
