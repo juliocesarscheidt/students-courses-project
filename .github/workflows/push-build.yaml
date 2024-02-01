@@ -5,11 +5,13 @@ on:
     branches:
       - 'main'
       - 'develop'
-    paths:
-      - 'src/**'
-      - 'test/**'
-      - 'Dockerfile'
-      - '.github/workflows/push-build.yaml'
+    # paths:
+    #   - 'src/**'
+    #   - 'test/**'
+    #   - 'package.json'
+    #   - 'Dockerfile'
+    #   - 'README.md'
+    #   - '.github/workflows/push-build.yaml'
   # pull_request:
   #   branches: [main, develop]
   #   types: [opened, reopened, synchronize, edited]
