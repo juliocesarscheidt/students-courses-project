@@ -51,10 +51,10 @@ jobs:
       env:
         REGISTRY_URL: ${{ env.REGISTRY_URL }}
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
-        SERVICE_TAG: ${{ env.SHORT_SHA }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
       run: |
-        echo "Building $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG"
-        docker image build -t $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG .
+        echo "Building $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
+        docker image build -t $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA .
     - id: lint-dockerfile
       name: Lint Dockerfile
       run: |
@@ -64,10 +64,10 @@ jobs:
       env:
         REGISTRY_URL: ${{ env.REGISTRY_URL }}
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
-        SERVICE_TAG: ${{ env.SHORT_SHA }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
       run: |
         docker container run --rm --name tmp-lint \
-          --entrypoint "" $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG \
+          --entrypoint "" $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA \
           sh -c "yarn install && yarn lint && yarn test:verbose"
     - id: publish-image
       name: Publish
@@ -75,10 +75,10 @@ jobs:
       env:
         REGISTRY_URL: ${{ env.REGISTRY_URL }}
         SERVICE_NAME: ${{ env.SERVICE_NAME }}
-        SERVICE_TAG: ${{ env.SHORT_SHA }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
       run: |
-        echo "Pushing $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG"
-        docker image push $REGISTRY_URL/$SERVICE_NAME:$SERVICE_TAG
+        echo "Pushing $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
+        docker image push $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA
 
   notify:
     name: Notify Pipeline
@@ -92,19 +92,23 @@ jobs:
     steps:
     - name: The job has failed
       if: ${{ failure() }}
+      env:
+        SHORT_SHA: ${{ env.SHORT_SHA }}
       uses: mshick/add-pr-comment@v1
       with:
         message: |
-          The build of commit $GITHUB_SHA has failed"
+          The build of commit $SHORT_SHA has failed"
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         repo-token-user-login: "github-actions[bot]"
         allow-repeats: false
     - name: The job has succeeded
       if: ${{ success() }}
       uses: mshick/add-pr-comment@v1
+      env:
+        SHORT_SHA: ${{ env.SHORT_SHA }}
       with:
         message: |
-          :rocket: The build of commit $GITHUB_SHA was successful, LGTM!"
+          :rocket: The build of commit $SHORT_SHA was successful, LGTM!"
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         repo-token-user-login: "github-actions[bot]"
         allow-repeats: false
