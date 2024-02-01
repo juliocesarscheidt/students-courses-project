@@ -70,32 +70,15 @@ jobs:
         echo "Pushing $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
         docker image push $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA
 
-  notify:
-    name: Notify Pipeline
-    runs-on: ubuntu-latest
-    needs: build
-    if: always()
-    permissions:
-      contents: read
-      pull-requests: write
-    defaults:
-      run:
-        shell: bash
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - id: set-short-sha
-      name: Set short SHA as environment variable
-      run: |
-        echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
     - id: notify
       name: Notify
+      if: always()
       env:
         SHORT_SHA: ${{ env.SHORT_SHA }}
       uses: mshick/add-pr-comment@v2
       with:
         message: |
-          🚀 The build of commit ${{ env.SHORT_SHA }} was successful, **LGTM**!
+          🚀 The build of commit ${{ env.SHORT_SHA }} has succeeded, **LGTM**!
         message-failure: |
           ❌ The build of commit ${{ env.SHORT_SHA }} has failed!
         repo-token: ${{ secrets.GITHUB_TOKEN }}
