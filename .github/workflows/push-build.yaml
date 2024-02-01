@@ -64,7 +64,7 @@ jobs:
     - id: lint-dockerfile
       name: Lint Dockerfile
       run: |
-        docker container run --rm --name hadolint -i hadolint/hadolint < ./Dockerfile
+        docker container run --rm --name hadolint -i hadolint/hadolint < Dockerfile
 
     - id: lint-and-test-service
       name: Lint and Test Service
