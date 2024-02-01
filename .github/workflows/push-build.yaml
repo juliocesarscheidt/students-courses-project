@@ -18,6 +18,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      pull-requests: write
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -69,7 +70,6 @@ jobs:
       run: |
         echo "Pushing $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
         docker image push $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA
-
     - id: notify
       name: Notify
       if: always()
