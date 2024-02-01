@@ -82,3 +82,4 @@ jobs:
         message-failure: |
           ❌ The build of commit ${{ env.SHORT_SHA }} has failed!
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        allow-repeats: true
