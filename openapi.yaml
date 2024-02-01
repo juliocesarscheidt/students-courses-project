@@ -1,0 +1,444 @@
+openapi: 3.0.1
+info:
+  title: students-courses-api
+  description: students-courses-api
+  termsOfService: https://blackdevs.com.br
+  contact:
+    name: Julio Scheidt
+    email: julio@blackdevs.com.br
+    url: https://blackdevs.com.br
+  license:
+    name: MIT License
+    url: https://raw.githubusercontent.com/juliocesarscheidt/students-courses-project/main/LICENSE.md
+  version: 0.0.1
+
+servers:
+  - url: http://students-courses-api.{NAMESPACE}.svc.cluster.local:4040
+
+tags:
+  - name: CourseServices
+    description: Services related to course resources
+  - name: StudentServices
+    description: Services related to student resources
+
+paths:
+  /v1/course:
+    post:
+      tags:
+        - CourseServices
+      summary: create course
+      description: create course
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoursePayload'
+      responses:
+        '201':
+          description: 'Created'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CourseFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/course/{coursePk}:
+    get:
+      tags:
+        - CourseServices
+      summary: get course by pk
+      description: get course by pk
+      operationId: getCourseByPk
+      parameters:
+        - name: coursePk
+          in: path
+          required: true
+          schema:
+            type: string
+            example: course1
+          description: coursePk
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CourseFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseNotFound'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/course/area/{area}:
+    get:
+      tags:
+        - CourseServices
+      summary: get courses by area
+      description: get courses by area
+      operationId: getCoursesByArea
+      parameters:
+        - name: area
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Technology
+          description: area
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CourseFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseNotFound'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/course/student/{studentPk}:
+    get:
+      tags:
+        - CourseServices
+      summary: get courses by student
+      description: get courses by student
+      operationId: getCoursesByStudent
+      parameters:
+        - name: studentPk
+          in: path
+          required: true
+          schema:
+            type: string
+            example: student1
+          description: studentPk
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CourseFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseNotFound'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/course/{coursePk}/subscribe/{studentPk}:
+    put:
+      tags:
+        - CourseServices
+      summary: subscribe student to course
+      description: subscribe student to course
+      operationId: subscribeStudentToCourse
+      parameters:
+        - name: coursePk
+          in: path
+          required: true
+          schema:
+            type: string
+            example: course1
+          description: coursePk
+        - name: studentPk
+          in: path
+          required: true
+          schema:
+            type: string
+            example: student1
+          description: studentPk
+      responses:
+        '202':
+          description: 'Accepted'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CourseFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseNotFound'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/student:
+    post:
+      tags:
+        - StudentServices
+      summary: create student
+      description: create student
+      operationId: createStudent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentPayload'
+      responses:
+        '201':
+          description: 'Created'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/StudentFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/student/{studentPk}:
+    get:
+      tags:
+        - StudentServices
+      summary: get student by pk
+      description: get student by pk
+      operationId: getStudentByPk
+      parameters:
+        - name: studentPk
+          in: path
+          required: true
+          schema:
+            type: string
+            example: student1
+          description: studentPk
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/StudentFull'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseBadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseNotFound'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    DefaultResponseBadRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 'Status code'
+          example: 'Bad request'
+
+    DefaultResponseUnauthorized:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 'Status code'
+          example: 'Unauthorized'
+
+    DefaultResponseNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 'Status code'
+          example: 'Not found'
+
+    DefaultResponseServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 'Status code'
+          example: 'Internal server error'
+
+    CreationDate:
+      type: string
+      format: date-time
+      example: '2021-01-01T12:00:00.000Z'
+
+    CoursePayload:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Course 1
+        price:
+          type: number
+          example: 100.00
+        area:
+          type: string
+          example: Technology
+        subArea:
+          type: string
+          example: Cloud Computing
+        author:
+          type: string
+          example: John Doe
+        quantityClasses:
+          type: number
+          example: 10
+
+    CourseFull:
+      allOf:
+        - $ref: '#/components/schemas/CoursePayload'
+        - type: object
+          properties:
+            pk:
+              type: string
+              example: course1
+            sk:
+              type: string
+              example: course#2024-02-01#100#technology#cloudcomputing#johndoe#
+            id:
+              type: string
+              example: de73ce5c-9ac5-45a9-82dc-b3d07b50560d
+            students:
+              type: array
+              items:
+                type: string
+                example: student1
+            creationDate:
+              $ref: '#/components/schemas/CreationDate'
+
+    StudentPayload:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Student"
+        surname:
+          type: string
+          example: "1"
+        email:
+          type: string
+          example: "student1@mail.com"
+
+    StudentFull:
+      allOf:
+        - $ref: '#/components/schemas/StudentPayload'
+        - type: object
+          properties:
+            pk:
+              type: string
+              example: student1
+            sk:
+              type: string
+              example: student#2024-02-01#1#student#
+            id:
+              type: string
+              example: 5d1e57a4-782b-4da7-b51b-2f03c6066955
+            creationDate:
+              $ref: '#/components/schemas/CreationDate'

@@ -1,0 +1,85 @@
+name: push-build
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+
+env:
+  SERVICE_NAME: students-courses-api
+  AWS_DEFAULT_REGION: us-east-1
+  IAM_ROLE_NAME: Github-CICD-OIDC
+
+jobs:
+  build:
+    name: Build Pipeline
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - id: aws-config
+      name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ env.IAM_ROLE_NAME }}
+        aws-region: ${{ env.AWS_DEFAULT_REGION }}
+        role-session-name: Github-Actions-Session
+    - id: login-ecr
+      name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+    - id: set-short-sha
+      name: Set short SHA and ECR registry URL as environment variables
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+        echo "REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
+    - id: build-image
+      name: Build image
+      env:
+        REGISTRY_URL: ${{ env.REGISTRY_URL }}
+        SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
+      run: |
+        echo "Building $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
+        docker image build -t $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA .
+    - id: lint-dockerfile
+      name: Lint Dockerfile
+      run: |
+        docker container run --rm --name hadolint -i hadolint/hadolint < Dockerfile
+    - id: lint-and-test-service
+      name: Lint and Test Service
+      env:
+        REGISTRY_URL: ${{ env.REGISTRY_URL }}
+        SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
+      run: |
+        docker container run --rm --name tmp-lint \
+          --entrypoint "" $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA \
+          sh -c "yarn install && yarn lint && yarn test:verbose"
+    - id: publish-image
+      name: Publish
+      if: github.ref == 'refs/heads/main'
+      env:
+        REGISTRY_URL: ${{ env.REGISTRY_URL }}
+        SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        SHORT_SHA: ${{ env.SHORT_SHA }}
+      run: |
+        echo "Pushing $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA"
+        docker image push $REGISTRY_URL/$SERVICE_NAME:$SHORT_SHA
+    - id: notify
+      name: Notify
+      if: always()
+      env:
+        SHORT_SHA: ${{ env.SHORT_SHA }}
+      uses: mshick/add-pr-comment@v2
+      with:
+        message: |
+          🚀 The build of commit ${{ env.SHORT_SHA }} has succeeded, **LGTM**!
+        message-failure: |
+          ❌ The build of commit ${{ env.SHORT_SHA }} has failed!
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        allow-repeats: true
