@@ -6,12 +6,17 @@ It's related to courses and students, with the persistence being done on DynamoD
 ## Running with Docker
 
 ```bash
-docker image build --tag juliocesarmidir/students-courses-project:1.0.0 .
+# with docker-compose
+docker-compose up -d --build
+docker-compose logs -f --tail 100 students-courses-project
+
+# with docker
+docker image build --tag juliocesarmidia/students-courses-project:1.0.0 .
 
 docker container run -d -p 4040:4040 \
   --name students-courses-project \
   --restart always \
-  juliocesarmidir/students-courses-project:1.0.0
+  juliocesarmidia/students-courses-project:1.0.0
 
-docker container logs -f students-courses-project
+docker container logs -f --tail 100 students-courses-project
 ```

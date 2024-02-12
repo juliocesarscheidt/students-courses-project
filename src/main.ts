@@ -14,6 +14,7 @@ const runInMemory = process.env.IN_MEMORY === "true" || false;
 let factory: RepositoryFactoryDynamodb | RepositoryFactoryMemory;
 
 if (runInMemory) {
+  console.log("Running in-memory database");
   factory = new RepositoryFactoryMemory();
 } else {
   const dynamodbClient = DynamoDBDocumentClient.from(
