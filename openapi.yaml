@@ -13,15 +13,73 @@ info:
   version: 0.0.1
 
 servers:
-  - url: http://students-courses-api.{NAMESPACE}.svc.cluster.local:4040
+  - url: http://localhost:4040
 
 tags:
+  - name: HealthChechServices
+    description: Services related to health check
   - name: CourseServices
     description: Services related to course resources
   - name: StudentServices
     description: Services related to student resources
 
 paths:
+  /v1/health/live:
+    get:
+      tags:
+        - HealthChechServices
+      summary: get liveness
+      description: get liveness
+      operationId: getLiveness
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: 'Alive'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
+  /v1/health/ready:
+    get:
+      tags:
+        - HealthChechServices
+      summary: get readiness
+      description: get readiness
+      operationId: getReadiness
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: 'Ready'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResponseServerError'
+
   /v1/course:
     post:
       tags:

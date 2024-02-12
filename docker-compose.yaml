@@ -1,0 +1,42 @@
+version: '3.4'
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  students-courses-project:
+    image: juliocesarmidia/students-courses-project:latest
+    build:
+      context: .
+    command: 'sh -c "yarn dev"'
+    container_name: students-courses-project
+    hostname: students-courses-project
+    environment:
+      IN_MEMORY: ${IN_MEMORY:-true}
+    networks:
+      - subnet_0
+    restart: on-failure
+    ports:
+      - 4040:4040
+    volumes:
+      - ./:/app:rw
+      - api-node-modules:/app/node_modules:rw
+    logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4040/v1/health/live || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  subnet_0:
+    driver: bridge
+
+volumes:
+  api-node-modules: {}
+
+secrets: {}
